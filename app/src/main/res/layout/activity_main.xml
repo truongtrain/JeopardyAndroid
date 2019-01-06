@@ -124,7 +124,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/noAnswerButton"
         app:layout_constraintStart_toEndOf="@+id/correctButton"
-        app:layout_constraintTop_toBottomOf="@+id/answerTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/wagerEditText" />
 
     <Button
         android:id="@+id/correctButton"
@@ -145,32 +145,37 @@
 
     <EditText
         android:id="@+id/wagerEditText"
-        android:layout_width="146dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="224dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="264dp"
+        android:layout_marginEnd="27dp"
+        android:layout_marginRight="27dp"
+        android:layout_marginBottom="159dp"
         android:background="#FFFFFF"
         android:ems="10"
         android:inputType="number"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/questionTextView" />
+        app:layout_constraintBottom_toTopOf="@+id/incorrectButton"
+        app:layout_constraintEnd_toStartOf="@+id/submitWagerButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/submitWagerButton"
-        android:layout_width="151dp"
+        android:layout_width="0dp"
         android:layout_height="39dp"
         android:layout_marginStart="23dp"
         android:layout_marginLeft="23dp"
         android:layout_marginTop="133dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginRight="12dp"
+        android:layout_marginEnd="38dp"
+        android:layout_marginRight="38dp"
         android:layout_marginBottom="132dp"
         android:text="SUBMIT WAGER"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/noAnswerButton"
-        app:layout_constraintEnd_toEndOf="@+id/questionTextView"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/wagerEditText"
         app:layout_constraintTop_toBottomOf="@+id/startButton" />
 
