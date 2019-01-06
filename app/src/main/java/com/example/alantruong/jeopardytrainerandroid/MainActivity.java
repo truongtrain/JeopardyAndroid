@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private int clueNumber = 1;
     private int wager;
     private boolean isDailyDouble = false;
+    private boolean isRound2 = false;
+    private boolean isFinalJeopardy = false;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -119,10 +121,8 @@ public class MainActivity extends AppCompatActivity {
                             category4 = categories.item(3).getTextContent();
                             category5 = categories.item(4).getTextContent();
                             category6 = categories.item(5).getTextContent();
-                            showClue(1);
-                        }
-                        catch (Exception p)
-                        {
+                            showClue();
+                        } catch (Exception p) {
                             p.printStackTrace();
                         }
 
@@ -134,8 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         showAnswerButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 showAnswerButton.setVisibility(View.INVISIBLE);
                 answerTextView.setText(answer.toUpperCase());
                 answerTextView.setVisibility(View.VISIBLE);
@@ -147,36 +146,40 @@ public class MainActivity extends AppCompatActivity {
         });
 
         submitWagerButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 try {
                     wager = Integer.parseInt(wagerEditText.getText().toString());
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "You must enter a wager",
                             Toast.LENGTH_SHORT);
 
                     toast.show();
                 }
-                if (wager < 5)
-                {
+                if (wager < 5 && !isFinalJeopardy) {
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "You must wager at least $5",
                             Toast.LENGTH_SHORT);
 
                     toast.show();
-                }
-                else if (wager > score)
-                {
+                } else if (isFinalJeopardy && wager < 0) {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "You must wager at least $0",
+                            Toast.LENGTH_SHORT);
+
+                    toast.show();
+                }else if (score <= 1000 && wager > 1000) {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "You cannot wager more than $1000",
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+                } else if (wager > score && score > 1000) {
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "You cannot wager more than your current score",
                             Toast.LENGTH_SHORT);
                     toast.show();
-                }
-                else
-                {
-                    //proceed with daily double clue
+                } else {
+                    //proceed with the clue
                     clueTextView.setText(clueText.toUpperCase());
                     showAnswerButton.setVisibility(View.VISIBLE);
                     submitWagerButton.setVisibility(View.INVISIBLE);
@@ -186,43 +189,51 @@ public class MainActivity extends AppCompatActivity {
         });
 
         correctButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 if (isDailyDouble) {
                     isDailyDouble = false;
                     score += wager;
-                }
-                else {
+                } else {
                     score += Integer.parseInt(clueValue.substring(1));
                 }
-                goToNextClue();
+                if (isFinalJeopardy) {
+                    clueTextView.setText("Congratulations! You finished this game! Play again?");
+                } else {
+                    goToNextClue();
+                }
+
 
             }
         });
 
         incorrectButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 if (isDailyDouble) {
                     isDailyDouble = false;
                     score -= wager;
-                }
-                else {
+                } else {
                     score -= Integer.parseInt(clueValue.substring(1));
                 }
-                goToNextClue();
+                if (isFinalJeopardy) {
+                    clueTextView.setText("Congratulations! You finished this game! Play again?");
+                } else {
+                    goToNextClue();
+                }
 
             }
         });
 
         noAnswerButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 if (isDailyDouble) {
                     isDailyDouble = false;
                     score -= wager;
                 }
-                goToNextClue();
+                if (isFinalJeopardy) {
+                    clueTextView.setText("Congratulations! You finished this game! Play again?");
+                } else {
+                    goToNextClue();
+                }
             }
         });
     }
@@ -234,12 +245,16 @@ public class MainActivity extends AppCompatActivity {
         incorrectButton.setVisibility(View.INVISIBLE);
         noAnswerButton.setVisibility(View.INVISIBLE);
         clueNumber += 1;
-        showClue(clueNumber);
+        showClue();
     }
 
-    public void showClue(int clueNumber) {
-
-        String clueOrderNumberXpath = "//div[@id='jeopardy_round']//td[. ='" + clueNumber + "']";
+    public void showClue() {
+        String clueOrderNumberXpath;
+        if (!isRound2) {
+            clueOrderNumberXpath = "//div[@id='jeopardy_round']//td[. ='" + clueNumber + "']";
+        } else {
+            clueOrderNumberXpath = "//div[@id='double_jeopardy_round']//td[. ='" + clueNumber + "']";
+        }
 
         try {
             //clue value ($)
@@ -247,12 +262,13 @@ public class MainActivity extends AppCompatActivity {
             try {
                 xExpress = xpath.compile(clueOrderNumberXpath + "/parent::tr/td[@class='clue_value']");
                 clueValue = ((NodeList) xExpress.evaluate(doc, XPathConstants.NODESET)).item(0).getTextContent();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 try {
                     //handle daily double
+
                     xExpress = xpath.compile(clueOrderNumberXpath + "/parent::tr/td[@class='clue_value_daily_double']");
                     clueValue = ((NodeList) xExpress.evaluate(doc, XPathConstants.NODESET)).item(0).getTextContent();
+
                     isDailyDouble = true;
                     //clue text
                     xExpress = xpath.compile(clueOrderNumberXpath + "/ancestor::td[@class='clue']//td[@class='clue_text']");
@@ -261,28 +277,28 @@ public class MainActivity extends AppCompatActivity {
                     //determine clue value and category
                     Element clueTextElement = (Element) clueTextNode;
                     String cluePosition = clueTextElement.getAttribute("id");
-                    cluePosition = cluePosition.substring(7);
+                    if (!isRound2) {
+                        cluePosition = cluePosition.substring(7);
+                    } else {
+                        cluePosition = cluePosition.substring(8);
+                    }
                     char clueRow = cluePosition.charAt(2);
-                    if (clueRow == '1')
-                    {
-                        clueValue = "$200";
+                    int clueValueInt = 0;
+                    if (clueRow == '1') {
+                        clueValueInt = 200;
+                    } else if (clueRow == '2') {
+                        clueValueInt = 400;
+                    } else if (clueRow == '3') {
+                        clueValueInt = 600;
+                    } else if (clueRow == '4') {
+                        clueValueInt = 800;
+                    } else if (clueRow == '5') {
+                        clueValueInt = 1000;
                     }
-                    else if (clueRow == '2')
-                    {
-                        clueValue = "$400";
+                    if (isRound2) {
+                        clueValueInt *= 2;
                     }
-                    else if (clueRow == '3')
-                    {
-                        clueValue = "$600";
-                    }
-                    else if (clueRow == '4')
-                    {
-                        clueValue = "$800";
-                    }
-                    else if (clueRow == '5')
-                    {
-                        clueValue = "$1000";
-                    }
+                    clueValue = "$" + clueValueInt;
                     char clueColumn = cluePosition.charAt(0);
                     showCategory(clueColumn);
 
@@ -300,17 +316,84 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 });
 
-                            }
-                            catch (Exception e)
-                            {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                     };
                     t.start();
-                }
-                catch (Exception d) {
+                } catch (Exception d) {
+                    //go to round 2
+                    if (!isRound2) {
+                        isRound2 = true;
+                        clueNumber = 1;
+                        clueTextView.setText("DOUBLE JEOPARDY ROUND");
+                        Thread t = new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(2000);
 
+                                } catch (Exception e) {
+
+                                }
+                            }
+                        };
+                        t.start();
+                        xExpress = xpath.compile("//div[@id='double_jeopardy_round']//td[@class='category_name']");
+                        NodeList categories = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
+                        category1 = categories.item(0).getTextContent();
+                        category2 = categories.item(1).getTextContent();
+                        category3 = categories.item(2).getTextContent();
+                        category4 = categories.item(3).getTextContent();
+                        category5 = categories.item(4).getTextContent();
+                        category6 = categories.item(5).getTextContent();
+                        showClue();
+                    } else {
+                        //go to final jeopardy
+                        clueTextView.setText("FINAL JEOPARDY");
+                        isFinalJeopardy = true;
+                        xExpress = xpath.compile("//div[@id='final_jeopardy_round']//td[@class='category_name']");
+                        NodeList categories = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
+                        category1 = categories.item(0).getTextContent(); //final category
+                        //clue text (the question)
+                        xExpress = xpath.compile( "//td[@id='clue_FJ']");
+                        Node clueTextNode = ((NodeList) xExpress.evaluate(doc, XPathConstants.NODESET)).item(0);
+                        clueText = clueTextNode.getTextContent();
+                        //the answer (solution)
+                        //use get the "onMouseOver" attribute and then get the string that in between class="correct_response"> and </em>
+                        xExpress = xpath.compile("//div[@id='final_jeopardy_round']//div[1]");
+                        Node onMouseOverNode = ((NodeList) xExpress.evaluate(doc, XPathConstants.NODESET)).item(0);
+                        Element onMouseOverElement = (Element) onMouseOverNode;
+                        String onMouseOverContent = onMouseOverElement.getAttribute("onmouseover");
+                        int beginIndex = onMouseOverContent.indexOf("correct_response") + 19;
+                        int endIndex = onMouseOverContent.indexOf("</em>");
+                        answer = onMouseOverContent.substring(beginIndex, endIndex);
+                        if (answer.contains("</i>") || answer.contains("</I>")) {
+                            answer = answer.substring(3, answer.length() - 4);
+                        }
+
+                        Thread t = new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(2000);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            clueTextView.setText("The category is " + category1 +"\n \n How much will you wager?");
+                                            wagerEditText.setVisibility(View.VISIBLE);
+                                            submitWagerButton.setVisibility(View.VISIBLE);
+                                        }
+                                    });
+
+                                } catch (Exception e) {
+
+                                }
+                            }
+                        };
+                        t.start();
+                    }
                 }
             }
 
@@ -323,7 +406,11 @@ public class MainActivity extends AppCompatActivity {
             //determine clue category
             Element clueTextElement = (Element) clueTextNode;
             String cluePosition = clueTextElement.getAttribute("id");
-            cluePosition = cluePosition.substring(7);
+            if (!isRound2) {
+                cluePosition = cluePosition.substring(7);
+            } else {
+                cluePosition = cluePosition.substring(8);
+            }
             char clueColumn = cluePosition.charAt(0);
             showCategory(clueColumn);
 
@@ -342,9 +429,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -360,48 +445,32 @@ public class MainActivity extends AppCompatActivity {
             int beginIndex = onMouseOverContent.indexOf("class=\"correct_response\">") + 25;
             int endIndex = onMouseOverContent.indexOf("</em>");
             answer = onMouseOverContent.substring(beginIndex, endIndex);
-            if (answer.contains("</i>") || answer.contains("</I>"))
-            {
-                answer = answer.substring(3, answer.length()-4);
+            if (answer.contains("</i>") || answer.contains("</I>")) {
+                answer = answer.substring(3, answer.length() - 4);
             }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
 
     }
 
-    public void showCategory(char clueColumn)
-    {
-        if (clueColumn == '1')
-        {
+    public void showCategory(char clueColumn) {
+        if (clueColumn == '1') {
             clueTextView.setText(category1 + " for " + clueValue);
-        }
-        else if (clueColumn == '2')
-        {
+        } else if (clueColumn == '2') {
             clueTextView.setText(category2 + " for " + clueValue);
-        }
-        else if (clueColumn == '3')
-        {
+        } else if (clueColumn == '3') {
             clueTextView.setText(category3 + " for " + clueValue);
-        }
-        else if (clueColumn == '4')
-        {
+        } else if (clueColumn == '4') {
             clueTextView.setText(category4 + " for " + clueValue);
-        }
-        else if (clueColumn == '5')
-        {
+        } else if (clueColumn == '5') {
             clueTextView.setText(category5 + " for " + clueValue);
-        }
-        else if (clueColumn == '6')
-        {
+        } else if (clueColumn == '6') {
             clueTextView.setText(category6 + " for " + clueValue);
         }
     }
-
-
 
 
 }
