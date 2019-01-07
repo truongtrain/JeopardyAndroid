@@ -10,61 +10,103 @@
     tools:layout_editor_absoluteY="81dp">
 
     <Button
-        android:id="@+id/startButton"
-        android:layout_width="169dp"
-        android:layout_height="51dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="86dp"
-        android:layout_marginRight="86dp"
-        android:text="Start Game"
-        app:layout_constraintEnd_toEndOf="@+id/questionTextView"
+        android:id="@+id/recentButton"
+        android:layout_width="0dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginLeft="9dp"
+        android:layout_marginEnd="9dp"
+        android:layout_marginRight="9dp"
+        android:text="Recent "
+        app:layout_constraintBaseline_toBaselineOf="@+id/randomButton"
+        app:layout_constraintEnd_toStartOf="@+id/randomButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/randomButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="9dp"
+        android:layout_marginRight="9dp"
+        android:layout_marginBottom="9dp"
+        android:text="Random "
+        app:layout_constraintBottom_toTopOf="@+id/questionTextView"
+        app:layout_constraintEnd_toStartOf="@+id/showNumberButton"
+        app:layout_constraintStart_toEndOf="@+id/recentButton"
         app:layout_constraintTop_toBottomOf="@+id/yourScoreLabelTextView" />
+
+    <Button
+        android:id="@+id/showNumberButton"
+        android:layout_width="0dp"
+        android:layout_height="49dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginRight="11dp"
+        android:text="Show #:  "
+        app:layout_constraintBaseline_toBaselineOf="@+id/showNumberEditText"
+        app:layout_constraintEnd_toStartOf="@+id/showNumberEditText"
+        app:layout_constraintStart_toEndOf="@+id/randomButton" />
 
     <TextView
         android:id="@+id/questionTextView"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="165dp"
         android:layout_marginStart="9dp"
         android:layout_marginLeft="9dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="110dp"
         android:layout_marginEnd="9dp"
         android:layout_marginRight="9dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="110dp"
         android:gravity="center"
         android:textColor="#FFFFFF"
         android:textSize="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/submitWagerButton"
+        app:layout_constraintBottom_toBottomOf="@+id/showAnswerButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startButton" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/answerTextView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
         android:layout_marginTop="64dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
         android:layout_marginBottom="62dp"
         android:gravity="center"
         android:textColor="#FFFFFF"
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/noAnswerButton"
-        app:layout_constraintStart_toStartOf="@+id/correctButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/showAnswerButton" />
 
     <TextView
         android:id="@+id/yourScoreLabelTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="31dp"
-        android:layout_marginLeft="31dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"
         android:layout_marginTop="14dp"
         android:text="Your Score:"
         android:textColor="#FFFFFF"
         android:textSize="20dp"
-        app:layout_constraintStart_toStartOf="@+id/startButton"
+        app:layout_constraintStart_toStartOf="@+id/randomButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/yourScoreLabelTextView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="14dp"
+        android:text="Play:"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -82,64 +124,62 @@
 
     <Button
         android:id="@+id/showAnswerButton"
-        android:layout_width="0dp"
+        android:layout_width="163dp"
         android:layout_height="50dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="126dp"
         android:text="Show Answer"
         android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@+id/noAnswerButton"
-        app:layout_constraintStart_toStartOf="@+id/startButton"
-        app:layout_constraintTop_toBottomOf="@+id/submitWagerButton" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/noAnswerButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
-        android:text="Did not answer"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginRight="19dp"
+        android:layout_marginBottom="7dp"
+        android:text="No Response"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/incorrectButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/incorrectButton"
-        app:layout_constraintTop_toTopOf="@+id/incorrectButton" />
+        app:layout_constraintTop_toBottomOf="@+id/answerTextView" />
 
     <Button
         android:id="@+id/incorrectButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="13dp"
-        android:layout_marginRight="13dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginRight="11dp"
         android:text="Incorrect"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/correctButton"
+        app:layout_constraintBottom_toBottomOf="@+id/noAnswerButton"
         app:layout_constraintEnd_toStartOf="@+id/noAnswerButton"
         app:layout_constraintStart_toEndOf="@+id/correctButton"
-        app:layout_constraintTop_toTopOf="@+id/correctButton" />
+        app:layout_constraintTop_toTopOf="@+id/noAnswerButton" />
 
     <Button
         android:id="@+id/correctButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="63dp"
-        android:layout_marginLeft="63dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
         android:text="Correct"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/incorrectButton"
         app:layout_constraintEnd_toStartOf="@+id/incorrectButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/answerTextView" />
+        app:layout_constraintTop_toTopOf="@+id/incorrectButton" />
 
     <EditText
         android:id="@+id/wagerEditText"
         android:layout_width="137dp"
         android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="#FFFFFF"
@@ -147,24 +187,36 @@
         android:inputType="number"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/showAnswerButton"
-        app:layout_constraintStart_toStartOf="@+id/questionTextView"
+        app:layout_constraintEnd_toStartOf="@+id/showAnswerButton"
+        app:layout_constraintStart_toStartOf="@+id/showAnswerButton"
         app:layout_constraintTop_toBottomOf="@+id/questionTextView" />
 
     <Button
         android:id="@+id/submitWagerButton"
-        android:layout_width="0dp"
-        android:layout_height="39dp"
-        android:layout_marginStart="26dp"
-        android:layout_marginLeft="26dp"
-        android:layout_marginTop="184dp"
-        android:layout_marginEnd="33dp"
-        android:layout_marginRight="33dp"
-        android:layout_marginBottom="184dp"
+        android:layout_width="138dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
         android:text="SUBMIT WAGER"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/questionTextView"
-        app:layout_constraintStart_toEndOf="@+id/wagerEditText"
-        app:layout_constraintTop_toBottomOf="@+id/startButton" />
+        app:layout_constraintBottom_toTopOf="@+id/showAnswerButton"
+        app:layout_constraintEnd_toEndOf="@+id/showAnswerButton"
+        app:layout_constraintStart_toEndOf="@+id/showAnswerButton"
+        app:layout_constraintTop_toBottomOf="@+id/questionTextView" />
+
+    <EditText
+        android:id="@+id/showNumberEditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="9dp"
+        android:layout_marginRight="9dp"
+        android:layout_marginBottom="13dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/questionTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/showNumberButton"
+        app:layout_constraintTop_toBottomOf="@+id/scoreTextView" />
 
 </android.support.constraint.ConstraintLayout>

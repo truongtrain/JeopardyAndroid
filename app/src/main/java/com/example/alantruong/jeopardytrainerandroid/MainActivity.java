@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean isDailyDouble = false;
     private boolean isRound2 = false;
     private boolean isFinalJeopardy = false;
+    private String recentShow;
+    private String randomShow;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -90,7 +92,9 @@ public class MainActivity extends AppCompatActivity {
         mTextMessage = (TextView) findViewById(R.id.message);
 
 
-        final Button startButton = findViewById(R.id.startButton);
+        final Button recentButton = findViewById(R.id.recentButton);
+        final Button randomButton = findViewById(R.id.randomButton);
+        final Button showNumberButton = findViewById(R.id.showNumberButton);
         correctButton = findViewById(R.id.correctButton);
         incorrectButton = findViewById(R.id.incorrectButton);
         noAnswerButton = findViewById(R.id.noAnswerButton);
@@ -101,14 +105,39 @@ public class MainActivity extends AppCompatActivity {
         wagerEditText = findViewById(R.id.wagerEditText);
         submitWagerButton = findViewById(R.id.submitWagerButton);
 
-        startButton.setOnClickListener(new View.OnClickListener() {
+        Ion.with(getApplicationContext()).load("http://www.j-archive.com").asString().setCallback(new FutureCallback<String>() {
+            @Override
+            public void onCompleted(Exception e, String result) {
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                try {
+                    builder = dbFactory.newDocumentBuilder();
+                    doc = builder.parse(new InputSource(new StringReader(result)));
+                    doc.getDocumentElement().normalize();
+                    xpath = XPathFactory.newInstance().newXPath();
+                    xExpress = xpath.compile("//a[contains(.,'from show')]");
+                    NodeList shows = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
+                    recentShow = ((Element) shows.item(0)).getAttribute("href");
+                    randomShow = ((Element) shows.item(1)).getAttribute("href");
+                } catch (Exception p) {
+                    p.printStackTrace();
+                }
+
+            }
+
+        });
+
+
+        recentButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Ion.with(getApplicationContext()).load("http://www.j-archive.com/showgame.php?game_id=6181").asString().setCallback(new FutureCallback<String>() {
+                clueTextView.setText("Loading the most recent game...");
+                Ion.with(getApplicationContext()).load("http://www.j-archive.com/" + recentShow).asString().setCallback(new FutureCallback<String>() {
                     @Override
                     public void onCompleted(Exception e, String result) {
                         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                         try {
-                            startButton.setVisibility(View.INVISIBLE);
+                            recentButton.setVisibility(View.INVISIBLE);
+                            randomButton.setVisibility(View.INVISIBLE);
+                            showNumberButton.setVisibility(View.INVISIBLE);
                             builder = dbFactory.newDocumentBuilder();
                             doc = builder.parse(new InputSource(new StringReader(result)));
                             doc.getDocumentElement().normalize();
@@ -328,27 +357,36 @@ public class MainActivity extends AppCompatActivity {
                         isRound2 = true;
                         clueNumber = 1;
                         clueTextView.setText("DOUBLE JEOPARDY ROUND");
-                        Thread t = new Thread() {
+                        Thread.sleep(2000);
+
+                        Thread t2 = new Thread() {
                             @Override
                             public void run() {
                                 try {
                                     Thread.sleep(2000);
+                                    xExpress = xpath.compile("//div[@id='double_jeopardy_round']//td[@class='category_name']");
+                                    NodeList categories = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
+                                    category1 = categories.item(0).getTextContent();
+                                    category2 = categories.item(1).getTextContent();
+                                    category3 = categories.item(2).getTextContent();
+                                    category4 = categories.item(3).getTextContent();
+                                    category5 = categories.item(4).getTextContent();
+                                    category6 = categories.item(5).getTextContent();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showClue();
+                                        }
+                                    });
 
                                 } catch (Exception e) {
 
                                 }
                             }
                         };
-                        t.start();
-                        xExpress = xpath.compile("//div[@id='double_jeopardy_round']//td[@class='category_name']");
-                        NodeList categories = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
-                        category1 = categories.item(0).getTextContent();
-                        category2 = categories.item(1).getTextContent();
-                        category3 = categories.item(2).getTextContent();
-                        category4 = categories.item(3).getTextContent();
-                        category5 = categories.item(4).getTextContent();
-                        category6 = categories.item(5).getTextContent();
-                        showClue();
+                        t2.start();
+
+
                     } else {
                         //go to final jeopardy
                         clueTextView.setText("FINAL JEOPARDY");
