@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
     private Button noAnswerButton;
     private Button showAnswerButton;
     private Button submitWagerButton;
+    private Button recentButton;
+    private Button randomButton;
+    private Button showNumberButton;
     private TextView scoreTextView;
     private EditText wagerEditText;
     private int score = 0;
@@ -92,9 +95,9 @@ public class MainActivity extends AppCompatActivity {
         mTextMessage = (TextView) findViewById(R.id.message);
 
 
-        final Button recentButton = findViewById(R.id.recentButton);
-        final Button randomButton = findViewById(R.id.randomButton);
-        final Button showNumberButton = findViewById(R.id.showNumberButton);
+        recentButton = findViewById(R.id.recentButton);
+        randomButton = findViewById(R.id.randomButton);
+        showNumberButton = findViewById(R.id.showNumberButton);
         correctButton = findViewById(R.id.correctButton);
         incorrectButton = findViewById(R.id.incorrectButton);
         noAnswerButton = findViewById(R.id.noAnswerButton);
@@ -133,34 +136,23 @@ public class MainActivity extends AppCompatActivity {
                 Ion.with(getApplicationContext()).load("http://www.j-archive.com/" + recentShow).asString().setCallback(new FutureCallback<String>() {
                     @Override
                     public void onCompleted(Exception e, String result) {
-                        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                        try {
-                            recentButton.setVisibility(View.INVISIBLE);
-                            randomButton.setVisibility(View.INVISIBLE);
-                            showNumberButton.setVisibility(View.INVISIBLE);
-                            builder = dbFactory.newDocumentBuilder();
-                            doc = builder.parse(new InputSource(new StringReader(result)));
-                            doc.getDocumentElement().normalize();
-                            xpath = XPathFactory.newInstance().newXPath();
-                            xExpress = xpath.compile("//div[@id='jeopardy_round']//td[@class='category_name']");
-                            NodeList categories = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
-                            category1 = categories.item(0).getTextContent();
-                            category2 = categories.item(1).getTextContent();
-                            category3 = categories.item(2).getTextContent();
-                            category4 = categories.item(3).getTextContent();
-                            category5 = categories.item(4).getTextContent();
-                            category6 = categories.item(5).getTextContent();
-                            showClue();
-                        } catch (Exception p) {
-                            p.printStackTrace();
-                        }
-
+                        initializeGame(result);
                     }
-
                 });
             }
         });
 
+        randomButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                clueTextView.setText("Loading a random game...");
+                Ion.with(getApplicationContext()).load("http://www.j-archive.com/" + randomShow).asString().setCallback(new FutureCallback<String>() {
+                    @Override
+                    public void onCompleted(Exception e, String result) {
+                        initializeGame(result);
+                    }
+                });
+            }
+        });
 
         showAnswerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -265,6 +257,31 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+
+    public void initializeGame(String result) {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        try {
+            recentButton.setVisibility(View.INVISIBLE);
+            randomButton.setVisibility(View.INVISIBLE);
+            showNumberButton.setVisibility(View.INVISIBLE);
+            builder = dbFactory.newDocumentBuilder();
+            doc = builder.parse(new InputSource(new StringReader(result)));
+            doc.getDocumentElement().normalize();
+            xpath = XPathFactory.newInstance().newXPath();
+            xExpress = xpath.compile("//div[@id='jeopardy_round']//td[@class='category_name']");
+            NodeList categories = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
+            category1 = categories.item(0).getTextContent();
+            category2 = categories.item(1).getTextContent();
+            category3 = categories.item(2).getTextContent();
+            category4 = categories.item(3).getTextContent();
+            category5 = categories.item(4).getTextContent();
+            category6 = categories.item(5).getTextContent();
+            showClue();
+        } catch (Exception p) {
+            p.printStackTrace();
+        }
     }
 
     public void goToNextClue() {
