@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
                     score += Integer.parseInt(clueValue.substring(1));
                 }
                 if (isFinalJeopardy) {
+                    score += wager;
                     clueTextView.setText("Congratulations! You finished this game! Play again?");
                 } else {
                     goToNextClue();
@@ -379,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        clueTextView.setText("DAILY DOUBLE \n \n How much will you wager?");
+                                        clueTextView.setText("DAILY DOUBLE \n How much will you wager?");
                                         wagerEditText.setVisibility(View.VISIBLE);
                                         submitWagerButton.setVisibility(View.VISIBLE);
                                     }
@@ -459,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            clueTextView.setText("The category is " + category1 +"\n \n How much will you wager?");
+                                            clueTextView.setText("The category is " + category1 +"\n How much will you wager?");
                                             wagerEditText.setVisibility(View.VISIBLE);
                                             submitWagerButton.setVisibility(View.VISIBLE);
                                         }
