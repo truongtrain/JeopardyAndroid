@@ -1,11 +1,13 @@
 package com.example.alantruong.jeopardytrainerandroid;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private String answer;
     private String clueText;
-    private DocumentBuilder builder;
+    //private DocumentBuilder builder;
     private Document doc;
     private XPath xpath;
     private XPathExpression xExpress;
@@ -63,8 +65,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean isDailyDouble = false;
     private boolean isRound2 = false;
     private boolean isFinalJeopardy = false;
-    private String recentShow;
-    private String randomShow;
+    private String showUrl;
+    private String url;
+    private int showIndex = 0; //0 means recent, 1 means random
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -108,47 +111,33 @@ public class MainActivity extends AppCompatActivity {
         wagerEditText = findViewById(R.id.wagerEditText);
         submitWagerButton = findViewById(R.id.submitWagerButton);
 
-        Ion.with(getApplicationContext()).load("http://www.j-archive.com").asString().setCallback(new FutureCallback<String>() {
-            @Override
-            public void onCompleted(Exception e, String result) {
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                try {
-                    builder = dbFactory.newDocumentBuilder();
-                    doc = builder.parse(new InputSource(new StringReader(result)));
-                    doc.getDocumentElement().normalize();
-                    xpath = XPathFactory.newInstance().newXPath();
-                    xExpress = xpath.compile("//a[contains(.,'from show')]");
-                    NodeList shows = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
-                    recentShow = ((Element) shows.item(0)).getAttribute("href");
-                    randomShow = ((Element) shows.item(1)).getAttribute("href");
-                } catch (Exception p) {
-                    p.printStackTrace();
-                }
 
-            }
-
-        });
 
 
         recentButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 clueTextView.setText("Loading the most recent game...");
-                Ion.with(getApplicationContext()).load("http://www.j-archive.com/" + recentShow).asString().setCallback(new FutureCallback<String>() {
+                showIndex = 0;
+                Ion.with(getApplicationContext()).load("http://www.j-archive.com").asString().setCallback(new FutureCallback<String>() {
                     @Override
                     public void onCompleted(Exception e, String result) {
-                        initializeGame(result);
+                        loadHtml(result);
+
                     }
                 });
+
             }
         });
 
         randomButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 clueTextView.setText("Loading a random game...");
-                Ion.with(getApplicationContext()).load("http://www.j-archive.com/" + randomShow).asString().setCallback(new FutureCallback<String>() {
+                showIndex = 1;
+                //loadHtml(result);
+                Ion.with(getApplicationContext()).load("http://www.j-archive.com").asString().setCallback(new FutureCallback<String>() {
                     @Override
                     public void onCompleted(Exception e, String result) {
-                        initializeGame(result);
+                        loadHtml(result);
                     }
                 });
             }
@@ -201,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
                     toast.show();
                 } else {
                     //proceed with the clue
+                    closeKeyboard();
                     clueTextView.setText(clueText.toUpperCase());
                     showAnswerButton.setVisibility(View.VISIBLE);
                     submitWagerButton.setVisibility(View.INVISIBLE);
@@ -259,14 +249,47 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 
-    public void initializeGame(String result) {
+    private void loadHtml(String result) {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder builder = dbFactory.newDocumentBuilder();
+            Document doc = builder.parse(new InputSource(new StringReader(result)));
+            doc.getDocumentElement().normalize();
+            xpath = XPathFactory.newInstance().newXPath();
+            xExpress = xpath.compile("//a[contains(.,'from show')]");
+            NodeList shows = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
+            int showsSize = shows.getLength();
+            showUrl = ((Element) shows.item(showIndex)).getAttribute("href");
+            url = "http://www.j-archive.com/" + showUrl;
+            Ion.with(getApplicationContext()).load(url).asString().setCallback(new FutureCallback<String>() {
+                @Override
+                public void onCompleted(Exception e, String result) {
+                    initializeGame(result);
+                }
+            });
+        } catch (Exception p) {
+            p.printStackTrace();
+        }
+    }
+
+
+    private void initializeGame(String result) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         try {
             recentButton.setVisibility(View.INVISIBLE);
             randomButton.setVisibility(View.INVISIBLE);
             showNumberButton.setVisibility(View.INVISIBLE);
+            DocumentBuilder builder = dbFactory.newDocumentBuilder();
             builder = dbFactory.newDocumentBuilder();
+            doc = builder.parse(new InputSource(new StringReader(result)));
             doc = builder.parse(new InputSource(new StringReader(result)));
             doc.getDocumentElement().normalize();
             xpath = XPathFactory.newInstance().newXPath();
@@ -284,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void goToNextClue() {
+    private void goToNextClue() {
         scoreTextView.setText("$" + score);
         answerTextView.setVisibility(View.INVISIBLE);
         correctButton.setVisibility(View.INVISIBLE);
@@ -294,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
         showClue();
     }
 
-    public void showClue() {
+    private void showClue() {
         String clueOrderNumberXpath;
         if (!isRound2) {
             clueOrderNumberXpath = "//div[@id='jeopardy_round']//td[. ='" + clueNumber + "']";
@@ -511,7 +534,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void showCategory(char clueColumn) {
+    private void showCategory(char clueColumn) {
         if (clueColumn == '1') {
             clueTextView.setText(category1 + " for " + clueValue);
         } else if (clueColumn == '2') {
