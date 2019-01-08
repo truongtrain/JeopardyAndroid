@@ -1,6 +1,8 @@
 package com.example.alantruong.jeopardytrainerandroid;
 
+import android.app.ActionBar;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -89,10 +91,20 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //go back to home screen
+    public boolean onOptionsItemSelected(MenuItem item){
+        Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivityForResult(myIntent, 0);
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         getSupportActionBar().setTitle("Jeopardy Trainer");
+        //back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.activity_main);
         mTextMessage = (TextView) findViewById(R.id.message);
@@ -209,7 +221,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (isFinalJeopardy) {
                     score += wager;
-                    clueTextView.setText("Congratulations! You finished this game! Play again?");
+                    clueTextView.setText("Congratulations! You finished this game!");
+                    correctButton.setVisibility(View.INVISIBLE);
+                    incorrectButton.setVisibility(View.INVISIBLE);
+                    noAnswerButton.setVisibility(View.INVISIBLE);
+                    recentButton.setVisibility(View.VISIBLE);
+                    randomButton.setVisibility(View.VISIBLE);
+                    showNumberButton.setVisibility(View.VISIBLE);
                 } else {
                     goToNextClue();
                 }
