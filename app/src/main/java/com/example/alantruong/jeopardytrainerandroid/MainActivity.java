@@ -287,13 +287,35 @@ public class MainActivity extends AppCompatActivity {
             NodeList shows = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
             int showsSize = shows.getLength();
             showUrl = ((Element) shows.item(showIndex)).getAttribute("href");
+            String showInfo = ((Element) shows.item(showIndex)).getTextContent();
+            String airDate = showInfo.substring(showInfo.length()-10, showInfo.length());
+            String episodeNumber = showInfo.substring(11, 15);
             url = "http://www.j-archive.com/" + showUrl;
-            Ion.with(getApplicationContext()).load(url).asString().setCallback(new FutureCallback<String>() {
+            clueTextView.setText("Episode " + episodeNumber + "\n Originally aired " + airDate);
+            Thread t = new Thread() {
                 @Override
-                public void onCompleted(Exception e, String result) {
-                    initializeGame(result);
+                public void run() {
+                    try {
+                        Thread.sleep(2000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Ion.with(getApplicationContext()).load(url).asString().setCallback(new FutureCallback<String>() {
+                                    @Override
+                                    public void onCompleted(Exception e, String result) {
+                                        initializeGame(result);
+                                    }
+                                });
+                            }
+                        });
+
+                    } catch (Exception e) {
+
+                    }
                 }
-            });
+            };
+            t.start();
+
         } catch (Exception p) {
             p.printStackTrace();
         }
@@ -327,11 +349,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToNextClue() {
-        scoreTextView.setText("$" + score);
-        answerTextView.setVisibility(View.INVISIBLE);
         correctButton.setVisibility(View.INVISIBLE);
         incorrectButton.setVisibility(View.INVISIBLE);
         noAnswerButton.setVisibility(View.INVISIBLE);
+        scoreTextView.setText("$" + score);
+        answerTextView.setVisibility(View.INVISIBLE);
         clueNumber += 1;
         showClue();
     }
@@ -398,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        clueTextView.setText("DAILY DOUBLE \n How much will you wager?");
+                                        clueTextView.setText("DAILY DOUBLE \n Enter your wager:");
                                         wagerEditText.setVisibility(View.VISIBLE);
                                         submitWagerButton.setVisibility(View.VISIBLE);
                                     }
@@ -478,7 +500,7 @@ public class MainActivity extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            clueTextView.setText("The category is " + category1 +"\n How much will you wager?");
+                                            clueTextView.setText("The category is " + category1 +"\n Enter your wager:");
                                             wagerEditText.setVisibility(View.VISIBLE);
                                             submitWagerButton.setVisibility(View.VISIBLE);
                                         }
