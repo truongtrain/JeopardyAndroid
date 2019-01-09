@@ -1,6 +1,5 @@
 package com.example.alantruong.jeopardytrainerandroid;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,9 +58,11 @@ public class MainActivity extends AppCompatActivity {
     private Button submitWagerButton;
     private Button recentButton;
     private Button randomButton;
-    private Button showNumberButton;
+    private Button findShowButton;
+    private Button submitDateButton;
     private TextView scoreTextView;
     private EditText wagerEditText;
+    private DatePicker datePicker;
     private int score = 0;
     private int clueNumber = 1;
     private int wager;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFinalJeopardy = false;
     private String showUrl;
     private String url;
+    private String date;
     private int showIndex = 0; //0 means recent, 1 means random
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -112,16 +115,18 @@ public class MainActivity extends AppCompatActivity {
 
         recentButton = findViewById(R.id.recentButton);
         randomButton = findViewById(R.id.randomButton);
-        showNumberButton = findViewById(R.id.showNumberButton);
+        findShowButton = findViewById(R.id.findShowButton);
         correctButton = findViewById(R.id.correctButton);
         incorrectButton = findViewById(R.id.incorrectButton);
         noAnswerButton = findViewById(R.id.noAnswerButton);
+        submitDateButton = findViewById(R.id.submitDateButton);
         answerTextView = findViewById(R.id.answerTextView);
         clueTextView = findViewById(R.id.questionTextView);
         showAnswerButton = findViewById(R.id.showAnswerButton);
         scoreTextView = findViewById(R.id.scoreTextView);
         wagerEditText = findViewById(R.id.wagerEditText);
         submitWagerButton = findViewById(R.id.submitWagerButton);
+        datePicker = findViewById(R.id.datePicker);
 
 
 
@@ -145,13 +150,33 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 clueTextView.setText("Loading a random game...");
                 showIndex = 1;
-                //loadHtml(result);
                 Ion.with(getApplicationContext()).load("http://www.j-archive.com").asString().setCallback(new FutureCallback<String>() {
                     @Override
                     public void onCompleted(Exception e, String result) {
                         loadHtml(result);
                     }
                 });
+            }
+        });
+
+        findShowButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                datePicker.setVisibility(View.VISIBLE);
+                submitDateButton.setVisibility(View.VISIBLE);
+                recentButton.setVisibility(View.INVISIBLE);
+                randomButton.setVisibility(View.INVISIBLE);
+                findShowButton.setVisibility(View.INVISIBLE);
+
+            }
+        });
+
+        submitDateButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                int day = datePicker.getDayOfMonth();
+                int month = datePicker.getMonth();
+                int year = datePicker.getYear();
+                month += 1;
+                date = year + "-" + month + "-" + day;
             }
         });
 
@@ -227,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                     noAnswerButton.setVisibility(View.INVISIBLE);
                     recentButton.setVisibility(View.VISIBLE);
                     randomButton.setVisibility(View.VISIBLE);
-                    showNumberButton.setVisibility(View.VISIBLE);
+                    findShowButton.setVisibility(View.VISIBLE);
                 } else {
                     goToNextClue();
                 }
@@ -327,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             recentButton.setVisibility(View.INVISIBLE);
             randomButton.setVisibility(View.INVISIBLE);
-            showNumberButton.setVisibility(View.INVISIBLE);
+            findShowButton.setVisibility(View.INVISIBLE);
             DocumentBuilder builder = dbFactory.newDocumentBuilder();
             builder = dbFactory.newDocumentBuilder();
             doc = builder.parse(new InputSource(new StringReader(result)));

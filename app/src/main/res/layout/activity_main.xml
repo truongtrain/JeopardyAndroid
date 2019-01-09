@@ -9,6 +9,16 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="81dp">
 
+    <DatePicker
+        android:id="@+id/datePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
+
     <Button
         android:id="@+id/recentButton"
         android:layout_width="0dp"
@@ -34,7 +44,7 @@
         app:layout_constraintTop_toBottomOf="@+id/yourScoreLabelTextView" />
 
     <Button
-        android:id="@+id/showNumberButton"
+        android:id="@+id/findShowButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
@@ -192,5 +202,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/wagerEditText"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/submitDateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="16dp"
+        android:text="Find"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/submitWagerButton"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
