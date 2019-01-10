@@ -172,11 +172,85 @@ public class MainActivity extends AppCompatActivity {
 
         submitDateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
+
                 int day = datePicker.getDayOfMonth();
                 int month = datePicker.getMonth();
                 int year = datePicker.getYear();
                 month += 1;
-                date = year + "-" + month + "-" + day;
+                String monthString = "";
+                String dayString = "";
+                if (month < 10) {
+                    monthString = "0" + month;
+                }
+                else {
+                    monthString = Integer.toString(month);
+                }
+                if (day < 10) {
+                    dayString = "0" + day;
+                }
+                else {
+                    dayString = Integer.toString(day);
+                }
+                date = year + "-" + monthString + "-" + dayString;
+                int season;
+                if (month >= 9) {
+                    season = year - 1983;
+                }
+                else {
+                    season = year - 1984;
+                }
+                Ion.with(getApplicationContext()).load("http://www.j-archive.com/showseason.php?season="+season).asString().setCallback(new FutureCallback<String>() {
+                    @Override
+                    public void onCompleted(Exception e, String result) {
+                        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                        try {
+                            DocumentBuilder builder = dbFactory.newDocumentBuilder();
+                            Document doc = builder.parse(new InputSource(new StringReader(result)));
+                            doc.getDocumentElement().normalize();
+                            xpath = XPathFactory.newInstance().newXPath();
+                            xExpress = xpath.compile("//a[contains(.,'" + date + "')]");
+                            NodeList shows = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
+                            showUrl = ((Element) shows.item(0)).getAttribute("href");
+                            String showInfo = ((Element) shows.item(0)).getTextContent();
+                            String episodeNumber = showInfo.substring(1, 5);
+                            url = showUrl;
+                            clueTextView.setText("Episode " + episodeNumber + "\n Originally aired " + date);
+                            submitDateButton.setVisibility(View.INVISIBLE);
+                            datePicker.setVisibility(View.INVISIBLE);
+                            Thread t = new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        Thread.sleep(2000);
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Ion.with(getApplicationContext()).load(url).asString().setCallback(new FutureCallback<String>() {
+                                                    @Override
+                                                    public void onCompleted(Exception e, String result) {
+
+                                                        initializeGame(result);
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                                    } catch (Exception e) {
+                                        clueTextView.setText("Could not find a game that was originally aired on " + date);
+                                    }
+                                }
+                            };
+                            t.start();
+
+                        } catch (Exception p) {
+                            clueTextView.setText("Could not find a game that was originally aired on " + date +". Try another date.");
+
+                        }
+                    }
+                });
+
+
             }
         });
 
@@ -310,7 +384,6 @@ public class MainActivity extends AppCompatActivity {
             xpath = XPathFactory.newInstance().newXPath();
             xExpress = xpath.compile("//a[contains(.,'from show')]");
             NodeList shows = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
-            int showsSize = shows.getLength();
             showUrl = ((Element) shows.item(showIndex)).getAttribute("href");
             String showInfo = ((Element) shows.item(showIndex)).getTextContent();
             String airDate = showInfo.substring(showInfo.length()-10, showInfo.length());
