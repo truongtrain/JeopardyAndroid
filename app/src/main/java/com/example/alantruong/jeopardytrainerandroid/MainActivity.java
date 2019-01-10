@@ -34,7 +34,6 @@ import org.xml.sax.InputSource;
 import java.io.StringReader;
 
 public class MainActivity extends AppCompatActivity {
-
     private TextView mTextMessage;
     private String answer;
     private String clueText;
@@ -73,10 +72,8 @@ public class MainActivity extends AppCompatActivity {
     private String url;
     private String date;
     private int showIndex = 0; //0 means recent, 1 means random
-
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
@@ -95,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     //go back to home screen
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
         startActivityForResult(myIntent, 0);
         return true;
@@ -104,15 +101,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         getSupportActionBar().setTitle("Jeopardy Trainer");
         //back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         setContentView(R.layout.activity_main);
         mTextMessage = (TextView) findViewById(R.id.message);
-
-
         recentButton = findViewById(R.id.recentButton);
         randomButton = findViewById(R.id.randomButton);
         findShowButton = findViewById(R.id.findShowButton);
@@ -127,10 +120,6 @@ public class MainActivity extends AppCompatActivity {
         wagerEditText = findViewById(R.id.wagerEditText);
         submitWagerButton = findViewById(R.id.submitWagerButton);
         datePicker = findViewById(R.id.datePicker);
-
-
-
-
         recentButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 clueTextView.setText("Loading the most recent game...");
@@ -139,13 +128,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onCompleted(Exception e, String result) {
                         loadHtml(result);
-
                     }
                 });
 
             }
         });
-
         randomButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 clueTextView.setText("Loading a random game...");
@@ -158,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-
         findShowButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 datePicker.setVisibility(View.VISIBLE);
@@ -166,14 +152,10 @@ public class MainActivity extends AppCompatActivity {
                 recentButton.setVisibility(View.INVISIBLE);
                 randomButton.setVisibility(View.INVISIBLE);
                 findShowButton.setVisibility(View.INVISIBLE);
-
             }
         });
-
         submitDateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-
                 int day = datePicker.getDayOfMonth();
                 int month = datePicker.getMonth();
                 int year = datePicker.getYear();
@@ -182,25 +164,22 @@ public class MainActivity extends AppCompatActivity {
                 String dayString = "";
                 if (month < 10) {
                     monthString = "0" + month;
-                }
-                else {
+                } else {
                     monthString = Integer.toString(month);
                 }
                 if (day < 10) {
                     dayString = "0" + day;
-                }
-                else {
+                } else {
                     dayString = Integer.toString(day);
                 }
                 date = year + "-" + monthString + "-" + dayString;
                 int season;
                 if (month >= 9) {
                     season = year - 1983;
-                }
-                else {
+                } else {
                     season = year - 1984;
                 }
-                Ion.with(getApplicationContext()).load("http://www.j-archive.com/showseason.php?season="+season).asString().setCallback(new FutureCallback<String>() {
+                Ion.with(getApplicationContext()).load("http://www.j-archive.com/showseason.php?season=" + season).asString().setCallback(new FutureCallback<String>() {
                     @Override
                     public void onCompleted(Exception e, String result) {
                         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -235,25 +214,19 @@ public class MainActivity extends AppCompatActivity {
                                                 });
                                             }
                                         });
-
                                     } catch (Exception e) {
                                         clueTextView.setText("Could not find a game that was originally aired on " + date);
                                     }
                                 }
                             };
                             t.start();
-
                         } catch (Exception p) {
-                            clueTextView.setText("Could not find a game that was originally aired on " + date +". Try another date.");
-
+                            clueTextView.setText("Could not find a game that was originally aired on " + date + ". Try another date.");
                         }
                     }
                 });
-
-
             }
         });
-
         showAnswerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showAnswerButton.setVisibility(View.INVISIBLE);
@@ -262,10 +235,8 @@ public class MainActivity extends AppCompatActivity {
                 correctButton.setVisibility(View.VISIBLE);
                 incorrectButton.setVisibility(View.VISIBLE);
                 noAnswerButton.setVisibility(View.VISIBLE);
-
             }
         });
-
         submitWagerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -289,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT);
 
                     toast.show();
-                }else if (score <= 1000 && wager > 1000) {
+                } else if (score <= 1000 && wager > 1000) {
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "You cannot wager more than $1000",
                             Toast.LENGTH_SHORT);
@@ -309,7 +280,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
         correctButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isDailyDouble) {
@@ -330,11 +300,8 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     goToNextClue();
                 }
-
-
             }
         });
-
         incorrectButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isDailyDouble) {
@@ -348,10 +315,8 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     goToNextClue();
                 }
-
             }
         });
-
         noAnswerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isDailyDouble) {
@@ -386,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
             NodeList shows = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
             showUrl = ((Element) shows.item(showIndex)).getAttribute("href");
             String showInfo = ((Element) shows.item(showIndex)).getTextContent();
-            String airDate = showInfo.substring(showInfo.length()-10, showInfo.length());
+            String airDate = showInfo.substring(showInfo.length() - 10, showInfo.length());
             String episodeNumber = showInfo.substring(11, 15);
             url = "http://www.j-archive.com/" + showUrl;
             clueTextView.setText("Episode " + episodeNumber + "\n Originally aired " + airDate);
@@ -406,7 +371,6 @@ public class MainActivity extends AppCompatActivity {
                                 });
                             }
                         });
-
                     } catch (Exception e) {
 
                     }
@@ -463,7 +427,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             clueOrderNumberXpath = "//div[@id='double_jeopardy_round']//td[. ='" + clueNumber + "']";
         }
-
         try {
             //clue value ($)
             xpath = XPathFactory.newInstance().newXPath();
@@ -473,10 +436,8 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 try {
                     //handle daily double
-
                     xExpress = xpath.compile(clueOrderNumberXpath + "/parent::tr/td[@class='clue_value_daily_double']");
                     clueValue = ((NodeList) xExpress.evaluate(doc, XPathConstants.NODESET)).item(0).getTextContent();
-
                     isDailyDouble = true;
                     //clue text
                     xExpress = xpath.compile(clueOrderNumberXpath + "/ancestor::td[@class='clue']//td[@class='clue_text']");
@@ -509,7 +470,6 @@ public class MainActivity extends AppCompatActivity {
                     clueValue = "$" + clueValueInt;
                     char clueColumn = cluePosition.charAt(0);
                     showCategory(clueColumn);
-
                     Thread t = new Thread() {
                         @Override
                         public void run() {
@@ -523,7 +483,6 @@ public class MainActivity extends AppCompatActivity {
                                         submitWagerButton.setVisibility(View.VISIBLE);
                                     }
                                 });
-
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -537,7 +496,6 @@ public class MainActivity extends AppCompatActivity {
                         clueNumber = 1;
                         clueTextView.setText("DOUBLE JEOPARDY ROUND");
                         Thread.sleep(2000);
-
                         Thread t2 = new Thread() {
                             @Override
                             public void run() {
@@ -557,15 +515,11 @@ public class MainActivity extends AppCompatActivity {
                                             showClue();
                                         }
                                     });
-
                                 } catch (Exception e) {
-
                                 }
                             }
                         };
                         t2.start();
-
-
                     } else {
                         //go to final jeopardy
                         clueTextView.setText("FINAL JEOPARDY");
@@ -574,7 +528,7 @@ public class MainActivity extends AppCompatActivity {
                         NodeList categories = (NodeList) xExpress.evaluate(doc, XPathConstants.NODESET);
                         category1 = categories.item(0).getTextContent(); //final category
                         //clue text (the question)
-                        xExpress = xpath.compile( "//td[@id='clue_FJ']");
+                        xExpress = xpath.compile("//td[@id='clue_FJ']");
                         Node clueTextNode = ((NodeList) xExpress.evaluate(doc, XPathConstants.NODESET)).item(0);
                         clueText = clueTextNode.getTextContent();
                         //the answer (solution)
@@ -589,7 +543,6 @@ public class MainActivity extends AppCompatActivity {
                         if (answer.contains("</i>") || answer.contains("</I>")) {
                             answer = answer.substring(3, answer.length() - 4);
                         }
-
                         Thread t = new Thread() {
                             @Override
                             public void run() {
@@ -598,14 +551,12 @@ public class MainActivity extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            clueTextView.setText("The category is " + category1 +"\n Enter your wager:");
+                                            clueTextView.setText("The category is " + category1 + "\n Enter your wager:");
                                             wagerEditText.setVisibility(View.VISIBLE);
                                             submitWagerButton.setVisibility(View.VISIBLE);
                                         }
                                     });
-
                                 } catch (Exception e) {
-
                                 }
                             }
                         };
@@ -613,13 +564,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-
             //clue text (the question)
             xExpress = xpath.compile(clueOrderNumberXpath + "/ancestor::td[@class='clue']//td[@class='clue_text']");
             Node clueTextNode = ((NodeList) xExpress.evaluate(doc, XPathConstants.NODESET)).item(0);
             clueText = clueTextNode.getTextContent();
-
-
             //determine clue category
             Element clueTextElement = (Element) clueTextNode;
             String cluePosition = clueTextElement.getAttribute("id");
@@ -630,7 +578,6 @@ public class MainActivity extends AppCompatActivity {
             }
             char clueColumn = cluePosition.charAt(0);
             showCategory(clueColumn);
-
             Thread t = new Thread() {
                 @Override
                 public void run() {
@@ -645,14 +592,12 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             };
             t.start();
-
             //the answer (solution)
             //use get the "onMouseOver" attribute and then get the string that in between class="correct_response"> and </em>
             xExpress = xpath.compile(clueOrderNumberXpath + "/ancestor::div[1]");
@@ -665,12 +610,9 @@ public class MainActivity extends AppCompatActivity {
             if (answer.contains("</i>") || answer.contains("</I>")) {
                 answer = answer.substring(3, answer.length() - 4);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     private void showCategory(char clueColumn) {
@@ -688,6 +630,4 @@ public class MainActivity extends AppCompatActivity {
             clueTextView.setText(category6 + " for " + clueValue);
         }
     }
-
-
 }
