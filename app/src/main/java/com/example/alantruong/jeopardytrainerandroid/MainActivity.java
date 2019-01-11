@@ -290,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (isFinalJeopardy) {
                     score += wager;
+                    scoreTextView.setText(score);
                     clueTextView.setText("Congratulations! You finished this game!");
                     correctButton.setVisibility(View.INVISIBLE);
                     incorrectButton.setVisibility(View.INVISIBLE);
@@ -392,7 +393,6 @@ public class MainActivity extends AppCompatActivity {
             findShowButton.setVisibility(View.INVISIBLE);
             DocumentBuilder builder = dbFactory.newDocumentBuilder();
             builder = dbFactory.newDocumentBuilder();
-            doc = builder.parse(new InputSource(new StringReader(result)));
             doc = builder.parse(new InputSource(new StringReader(result)));
             doc.getDocumentElement().normalize();
             xpath = XPathFactory.newInstance().newXPath();
