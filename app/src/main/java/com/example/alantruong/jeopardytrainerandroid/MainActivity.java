@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     try {
-                                        Thread.sleep(2000);
+                                        //Thread.sleep(2000);
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -300,11 +300,9 @@ public class MainActivity extends AppCompatActivity {
                 correctButton.setVisibility(View.INVISIBLE);
                 incorrectButton.setVisibility(View.INVISIBLE);
                 noAnswerButton.setVisibility(View.INVISIBLE);
-                /*
-                recentButton.setVisibility(View.VISIBLE);
-                randomButton.setVisibility(View.VISIBLE);
-                findShowButton.setVisibility(View.VISIBLE);
-                */
+
+
+
 
             }
         });
@@ -326,11 +324,9 @@ public class MainActivity extends AppCompatActivity {
                 correctButton.setVisibility(View.INVISIBLE);
                 incorrectButton.setVisibility(View.INVISIBLE);
                 noAnswerButton.setVisibility(View.INVISIBLE);
-                /*
-                recentButton.setVisibility(View.VISIBLE);
-                randomButton.setVisibility(View.VISIBLE);
-                findShowButton.setVisibility(View.VISIBLE);
-                */
+
+
+
             }
         });
         noAnswerButton.setOnClickListener(new View.OnClickListener() {
@@ -350,11 +346,9 @@ public class MainActivity extends AppCompatActivity {
                 correctButton.setVisibility(View.INVISIBLE);
                 incorrectButton.setVisibility(View.INVISIBLE);
                 noAnswerButton.setVisibility(View.INVISIBLE);
-                /*
-                recentButton.setVisibility(View.VISIBLE);
-                randomButton.setVisibility(View.VISIBLE);
-                findShowButton.setVisibility(View.VISIBLE);
-                */
+
+
+
             }
         });
     }
@@ -386,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(2000);
+                        //Thread.sleep(2000);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
