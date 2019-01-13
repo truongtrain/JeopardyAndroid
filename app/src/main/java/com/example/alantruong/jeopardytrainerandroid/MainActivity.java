@@ -282,70 +282,79 @@ public class MainActivity extends AppCompatActivity {
         });
         correctButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (isFinalJeopardy) {
-                    score += wager;
-                    scoreTextView.setText(score);
-                    clueTextView.setText("Congratulations! You finished this game!");
-                    correctButton.setVisibility(View.INVISIBLE);
-                    incorrectButton.setVisibility(View.INVISIBLE);
-                    noAnswerButton.setVisibility(View.INVISIBLE);
-                    recentButton.setVisibility(View.VISIBLE);
-                    randomButton.setVisibility(View.VISIBLE);
-                    findShowButton.setVisibility(View.VISIBLE);
-                }else if (isDailyDouble) {
+
+                if (isDailyDouble) {
                     isDailyDouble = false;
                     score += wager;
                     goToNextClue();
-                }
-                else {
+                }else if (isFinalJeopardy) {
+                    score += wager;
+                    scoreTextView.setText("$" + score);
+                    clueTextView.setText("Congratulations! You finished this game!");
+
+                }else {
                     score += Integer.parseInt(clueValue.substring(1));
                     goToNextClue();
                 }
+
+                correctButton.setVisibility(View.INVISIBLE);
+                incorrectButton.setVisibility(View.INVISIBLE);
+                noAnswerButton.setVisibility(View.INVISIBLE);
+                /*
+                recentButton.setVisibility(View.VISIBLE);
+                randomButton.setVisibility(View.VISIBLE);
+                findShowButton.setVisibility(View.VISIBLE);
+                */
+
             }
         });
         incorrectButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (isFinalJeopardy) {
-                    score += wager;
-                    scoreTextView.setText(score);
-                    clueTextView.setText("Congratulations! You finished this game!");
-                    correctButton.setVisibility(View.INVISIBLE);
-                    incorrectButton.setVisibility(View.INVISIBLE);
-                    noAnswerButton.setVisibility(View.INVISIBLE);
-                    recentButton.setVisibility(View.VISIBLE);
-                    randomButton.setVisibility(View.VISIBLE);
-                    findShowButton.setVisibility(View.VISIBLE);
-                }else if (isDailyDouble) {
+                if (isDailyDouble) {
                     isDailyDouble = false;
                     score -= wager;
                     goToNextClue();
-                }
-                else {
+                }else if (isFinalJeopardy) {
+                    score -= wager;
+                    scoreTextView.setText("$" + score);
+                    clueTextView.setText("Congratulations! You finished this game!");
+                }else {
                     score -= Integer.parseInt(clueValue.substring(1));
                     goToNextClue();
                 }
+
+                correctButton.setVisibility(View.INVISIBLE);
+                incorrectButton.setVisibility(View.INVISIBLE);
+                noAnswerButton.setVisibility(View.INVISIBLE);
+                /*
+                recentButton.setVisibility(View.VISIBLE);
+                randomButton.setVisibility(View.VISIBLE);
+                findShowButton.setVisibility(View.VISIBLE);
+                */
             }
         });
         noAnswerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (isFinalJeopardy) {
-                    score -= wager;
-                    scoreTextView.setText(score);
-                    clueTextView.setText("Congratulations! You finished this game!");
-                    correctButton.setVisibility(View.INVISIBLE);
-                    incorrectButton.setVisibility(View.INVISIBLE);
-                    noAnswerButton.setVisibility(View.INVISIBLE);
-                    recentButton.setVisibility(View.VISIBLE);
-                    randomButton.setVisibility(View.VISIBLE);
-                    findShowButton.setVisibility(View.VISIBLE);
-                }else if (isDailyDouble) {
+                if (isDailyDouble) {
                     isDailyDouble = false;
                     score -= wager;
                     goToNextClue();
-                }
-                else {
+                }else if (isFinalJeopardy) {
+                    score -= wager;
+                    scoreTextView.setText("$" + score);
+                    clueTextView.setText("Congratulations! You finished this game!");
+                }else {
                     goToNextClue();
                 }
+
+                correctButton.setVisibility(View.INVISIBLE);
+                incorrectButton.setVisibility(View.INVISIBLE);
+                noAnswerButton.setVisibility(View.INVISIBLE);
+                /*
+                recentButton.setVisibility(View.VISIBLE);
+                randomButton.setVisibility(View.VISIBLE);
+                findShowButton.setVisibility(View.VISIBLE);
+                */
             }
         });
     }
