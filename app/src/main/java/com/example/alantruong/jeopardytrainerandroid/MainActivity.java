@@ -194,9 +194,9 @@ public class MainActivity extends AppCompatActivity {
                             String showInfo = ((Element) shows.item(0)).getTextContent();
                             String episodeNumber = showInfo.substring(1, 5);
                             url = showUrl;
-                            clueTextView.setText("Episode " + episodeNumber + "\n Originally aired " + date);
                             submitDateButton.setVisibility(View.INVISIBLE);
                             datePicker.setVisibility(View.INVISIBLE);
+                            clueTextView.setText("Episode " + episodeNumber + "\n Originally aired " + date);
                             Thread t = new Thread() {
                                 @Override
                                 public void run() {
@@ -225,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+
             }
         });
         showAnswerButton.setOnClickListener(new View.OnClickListener() {
