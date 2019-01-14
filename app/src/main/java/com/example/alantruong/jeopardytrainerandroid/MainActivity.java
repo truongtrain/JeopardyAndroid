@@ -464,11 +464,7 @@ public class MainActivity extends AppCompatActivity {
                     xExpress = xpath.compile(clueOrderNumberXpath + "/ancestor::td[@class='clue']//td[@class='clue_text']");
                     Node clueTextNode = ((NodeList) xExpress.evaluate(doc, XPathConstants.NODESET)).item(0);
                     clueText = clueTextNode.getTextContent();
-                    //get rid of unnecessary parts of the clue text
-                    if (clueText.charAt(0) == '(') {
-                        int endIndex = clueText.indexOf(')');
-                        clueText = clueText.substring(endIndex+1);
-                    }
+                    removeParenthesesFromClue();
                     //determine clue value and category
                     Element clueTextElement = (Element) clueTextNode;
                     String cluePosition = clueTextElement.getAttribute("id");
@@ -556,6 +552,7 @@ public class MainActivity extends AppCompatActivity {
                         xExpress = xpath.compile("//td[@id='clue_FJ']");
                         Node clueTextNode = ((NodeList) xExpress.evaluate(doc, XPathConstants.NODESET)).item(0);
                         clueText = clueTextNode.getTextContent();
+                        removeParenthesesFromClue();
                         //the answer (solution)
                         //use get the "onMouseOver" attribute and then get the string that in between class="correct_response"> and </em>
                         xExpress = xpath.compile("//div[@id='final_jeopardy_round']//div[1]");
@@ -565,9 +562,7 @@ public class MainActivity extends AppCompatActivity {
                         int beginIndex = onMouseOverContent.indexOf("correct_response") + 19;
                         int endIndex = onMouseOverContent.indexOf("</em>");
                         answer = onMouseOverContent.substring(beginIndex, endIndex);
-                        if (answer.contains("</i>") || answer.contains("</I>")) {
-                            answer = answer.substring(3, answer.length() - 4);
-                        }
+                        formatAnswer();
                         Thread t = new Thread() {
                             @Override
                             public void run() {
@@ -593,6 +588,7 @@ public class MainActivity extends AppCompatActivity {
             xExpress = xpath.compile(clueOrderNumberXpath + "/ancestor::td[@class='clue']//td[@class='clue_text']");
             Node clueTextNode = ((NodeList) xExpress.evaluate(doc, XPathConstants.NODESET)).item(0);
             clueText = clueTextNode.getTextContent();
+            removeParenthesesFromClue();
             //determine clue category
             Element clueTextElement = (Element) clueTextNode;
             String cluePosition = clueTextElement.getAttribute("id");
@@ -632,12 +628,24 @@ public class MainActivity extends AppCompatActivity {
             int beginIndex = onMouseOverContent.indexOf("class=\"correct_response\">") + 25;
             int endIndex = onMouseOverContent.indexOf("</em>");
             answer = onMouseOverContent.substring(beginIndex, endIndex);
-            if (answer.contains("</i>") || answer.contains("</I>")) {
-                answer = answer.substring(3, answer.length() - 4);
-            }
+            formatAnswer();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void removeParenthesesFromClue() {
+        if (clueText.charAt(0) == '(') {
+            int endIndex = clueText.indexOf(')');
+            clueText = clueText.substring(endIndex+1);
+        }
+    }
+
+    private void formatAnswer() {
+        if (answer.contains("</i>") || answer.contains("</I>")) {
+            answer = answer.substring(3, answer.length() - 4);
+        }
+
     }
 
     private void showCategory(char clueColumn) {
