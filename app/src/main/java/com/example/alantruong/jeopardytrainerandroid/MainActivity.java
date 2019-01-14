@@ -645,6 +645,12 @@ public class MainActivity extends AppCompatActivity {
         if (answer.contains("</i>") || answer.contains("</I>")) {
             answer = answer.substring(3, answer.length() - 4);
         }
+        if (answer.contains("'s")) {
+            int apostropheIndex = answer.indexOf("'s");
+            String beforeApostrophe = answer.substring(0, apostropheIndex-1);
+            String afterApostrophe = answer.substring(apostropheIndex);
+            answer = beforeApostrophe + afterApostrophe;
+        }
 
     }
 
