@@ -464,6 +464,11 @@ public class MainActivity extends AppCompatActivity {
                     xExpress = xpath.compile(clueOrderNumberXpath + "/ancestor::td[@class='clue']//td[@class='clue_text']");
                     Node clueTextNode = ((NodeList) xExpress.evaluate(doc, XPathConstants.NODESET)).item(0);
                     clueText = clueTextNode.getTextContent();
+                    //get rid of unnecessary parts of the clue text
+                    if (clueText.charAt(0) == '(') {
+                        int endIndex = clueText.indexOf(')');
+                        clueText = clueText.substring(endIndex+1);
+                    }
                     //determine clue value and category
                     Element clueTextElement = (Element) clueTextNode;
                     String cluePosition = clueTextElement.getAttribute("id");
@@ -516,7 +521,6 @@ public class MainActivity extends AppCompatActivity {
                         isRound2 = true;
                         clueNumber = 1;
                         clueTextView.setText("DOUBLE JEOPARDY ROUND");
-                        Thread.sleep(2000);
                         Thread t2 = new Thread() {
                             @Override
                             public void run() {
